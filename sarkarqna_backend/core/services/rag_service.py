@@ -17,7 +17,7 @@ class RAGService:
         # Load embeddings from FAISS (with error handling)
         self.embeddings = self.hf_models.get_embeddings()
         try:
-            self.vectorstore = FAISS.load_local(embedding_path, self.embeddings)
+            self.vectorstore = FAISS.load_local(embedding_path, self.embeddings, allow_dangerous_deserialization=True)
             self.retriever = self.vectorstore.as_retriever(search_kwargs={"k": 3})
             
             # QA Chain for answer generation
