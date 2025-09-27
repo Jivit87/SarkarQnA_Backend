@@ -9,7 +9,7 @@ from core.utils.logger import logger
 # Create Socket.IO server
 sio = socketio.AsyncServer(
     async_mode='asgi',
-    cors_allowed_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
+    cors_allowed_origins="*",  # Allow all origins for development
     logger=True,
     engineio_logger=True,
     ping_timeout=60,
@@ -21,6 +21,9 @@ sio = socketio.AsyncServer(
 rag_service = None
 langgraph_service = None
 gemini_model = None
+
+# Message deduplication
+processed_messages = set()
 
 def initialize_services():
     """Initialize Gemini, RAG and LangGraph services"""
@@ -42,7 +45,7 @@ def initialize_services():
 async def connect(sid, environ):
     """Handle client connection"""
     logger.info(f"Client {sid} connected")
-    await sio.emit('connect', {'message': 'Connected to SarkarQnA server'}, room=sid)
+    await sio.emit('welcome', {'message': 'Connected to SarkarQnA server'}, room=sid)
 
 @sio.event
 async def disconnect(sid):
@@ -50,18 +53,8 @@ async def disconnect(sid):
     logger.info(f"Client {sid} disconnected")
 
 @sio.event
-async def message(sid, data):
-    """Handle incoming messages - main message handler"""
-    await handle_chat_message(sid, data)
-
-@sio.event
 async def chat_message(sid, data):
-    """Handle chat messages - alternative handler"""
-    await handle_chat_message(sid, data)
-
-@sio.event
-async def send_message(sid, data):
-    """Handle send message - alternative handler"""
+    """Handle chat messages - primary message handler"""
     await handle_chat_message(sid, data)
 
 async def handle_chat_message(sid, data):
@@ -77,8 +70,19 @@ async def handle_chat_message(sid, data):
             await sio.emit('error', {'message': 'Empty message received'}, room=sid)
             return
         
-        # Send acknowledgment
+        # Prevent duplicate processing
+        if message_id and message_id in processed_messages:
+            logger.info(f"Message {message_id} already processed, skipping")
+            return
+        
+        # Add to processed messages
         if message_id:
+            processed_messages.add(message_id)
+            # Keep only last 100 messages to prevent memory leak
+            if len(processed_messages) > 100:
+                processed_messages.clear()
+            
+            # Send acknowledgment
             await sio.emit('message_ack', {'messageId': message_id}, room=sid)
         
         if not gemini_model:
@@ -120,27 +124,12 @@ async def handle_chat_message(sid, data):
                     'sources': all_sources
                 })
                 
-                        # Send eligibility response
-                await sio.emit('response', response_data, room=sid)
-                await sio.emit('message', response_data, room=sid)
-                await sio.emit('chat_message', response_data, room=sid)
-                
-                logger.info(f"Sent response to {sid}: {response_data['text'][:100]}...")
-                
             except Exception as e:
                 logger.error(f"Error processing message with RAG: {e}")
-                error_response = {
-                    'id': f"error_{datetime.now().timestamp()}",
-                    'text': f"Sorry, I encountered an error processing your request: {str(e)}",
-                    'sender': 'System',
-                    'timestamp': datetime.now().isoformat(),
-                    'responseTo': message_id
-                }
-                await sio.emit('error', error_response, room=sid)
-        # For non-eligibility queries or when RAG isn't needed, send the Gemini response directly
+                response_data['text'] += f"\n\n*Note: Error accessing additional scheme data: {str(e)}*"
+        
+        # Send the response (either with or without RAG data)
         await sio.emit('response', response_data, room=sid)
-        await sio.emit('message', response_data, room=sid)
-        await sio.emit('chat_message', response_data, room=sid)
         
         logger.info(f"Sent response to {sid}: {response_data['text'][:100]}...")
             
