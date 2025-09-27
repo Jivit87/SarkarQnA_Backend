@@ -5,17 +5,17 @@ from fastapi.middleware.cors import CORSMiddleware
 import socketio
 from api import scheme_router
 from config import settings
-from core.utils.logger import logger
 from socket_handlers import sio
 
-app = FastAPI(
+# Create FastAPI application
+fastapi_app = FastAPI(
     title="SarkarQnA Backend",
     description="AI Bot for Government Scheme Eligibility",
     version="1.0.0"
 )
 
 # CORS for React frontend
-app.add_middleware(
+fastapi_app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.ALLOWED_ORIGINS,
     allow_credentials=True,
@@ -23,14 +23,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Mount Socket.IO app
-socket_app = socketio.ASGIApp(sio, other_asgi_app=app)
-app = socket_app
+# Add API routes
+fastapi_app.include_router(scheme_router.router, prefix="/api", tags=["Schemes"])
 
-# Include router
-app.include_router(scheme_router.router, prefix="/api", tags=["Schemes"])
-
-@app.get("/")
+# Root endpoint
+@fastapi_app.get("/")
 async def root():
     return {
         "message": "Welcome to SarkarQnA AI Backend!",
@@ -39,7 +36,8 @@ async def root():
         "socket": "/socket.io/"
     }
 
-@app.get("/health")
+# Health check endpoint
+@fastapi_app.get("/health")
 async def health_check():
     return {
         "status": "ok",
@@ -48,7 +46,8 @@ async def health_check():
         "socket_available": True
     }
 
-@app.get("/socket-status")
+# Socket status endpoint
+@fastapi_app.get("/socket-status")
 async def socket_status():
     """Check Socket.IO server status"""
     return {
@@ -60,3 +59,6 @@ async def socket_status():
             "ping", "pong", "get_status", "status"
         ]
     }
+
+# Mount Socket.IO app and create the final ASGI application
+app = socketio.ASGIApp(sio, other_asgi_app=fastapi_app)

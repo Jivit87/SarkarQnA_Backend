@@ -27,9 +27,13 @@ def initialize_services():
     global rag_service, langgraph_service, gemini_model
     try:
         from core.models.gemini_model import GeminiModel
+        from config import Settings
+        
+        settings = Settings()
         gemini_model = GeminiModel()
         rag_service = RAGService()
-        langgraph_service = LangGraphService()
+        langgraph_service = LangGraphService(api_key=settings.LANGGRAPH_API_KEY)
+        
         logger.info("Socket services initialized successfully")
     except Exception as e:
         logger.error(f"Failed to initialize socket services: {e}")
