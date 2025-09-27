@@ -1,0 +1,96 @@
+{
+  "schemes": [
+    {
+      "name": "Pradhan Mantri Kisan Samman Nidhi (PM-KISAN)",
+      "description": "Direct income support scheme for farmers",
+      "eligibility_criteria": [
+        "Farmer families with cultivable land",
+        "Age: 18-65 years",
+        "Annual income less than ₹2 lakh",
+        "Must have Aadhaar card",
+        "Bank account mandatory"
+      ],
+      "benefits": "₹6,000 per year in three installments of ₹2,000 each",
+      "language": "hindi",
+      "source": "pmkisan.gov.in"
+    },
+    {
+      "name": "Pradhan Mantri Awas Yojana (PMAY)",
+      "description": "Housing for all scheme",
+      "eligibility_criteria": [
+        "Economically Weaker Section (EWS) families",
+        "Annual income less than ₹3 lakh",
+        "No pucca house in any part of India",
+        "Must be Indian citizen",
+        "Age: 18-70 years"
+      ],
+      "benefits": "Financial assistance up to ₹2.5 lakh for house construction",
+      "language": "hindi",
+      "source": "pmaymis.gov.in"
+    },
+    {
+      "name": "Ayushman Bharat Pradhan Mantri Jan Arogya Yojana (AB-PMJAY)",
+      "description": "Health insurance scheme for poor and vulnerable families",
+      "eligibility_criteria": [
+        "Families in SECC database",
+        "No pucca house or no adult member with education",
+        "No adult member with government job",
+        "No adult member with motorized vehicle",
+        "No adult member with Kisan Credit Card"
+      ],
+      "benefits": "Health cover of ₹5 lakh per family per year",
+      "language": "hindi",
+      "source": "pmjay.gov.in"
+    },
+    {
+      "name": "Pradhan Mantri Ujjwala Yojana (PMUY)",
+      "description": "LPG connection scheme for women",
+      "eligibility_criteria": [
+        "Adult women (18+ years)",
+        "No LPG connection in household",
+        "BPL family or SECC database",
+        "Must have bank account",
+        "Aadhaar card mandatory"
+      ],
+      "benefits": "Free LPG connection with first refill",
+      "language": "hindi",
+      "source": "pmujjwalayojana.com"
+    },
+    {
+      "name": "Pradhan Mantri Mudra Yojana (PMMY)",
+      "description": "Micro finance scheme for small businesses",
+      "eligibility_criteria": [
+        "Non-corporate small business",
+        "Annual turnover less than ₹5 crore",
+        "Age: 18-65 years",
+        "Indian citizen",
+        "Business plan required"
+      ],
+      "benefits": "Loans up to ₹10 lakh under three categories: Shishu, Kishor, Tarun",
+      "language": "hindi",
+      "source": "mudra.org.in"
+    }
+  ],
+  "sample_queries": [
+    {
+      "query": "मैं किसान हूं, क्या मैं PM-KISAN के लिए योग्य हूं?",
+      "expected_eligible": true,
+      "scheme": "PM-KISAN"
+    },
+    {
+      "query": "I am a farmer with 2 acres land, am I eligible for any scheme?",
+      "expected_eligible": true,
+      "scheme": "PM-KISAN"
+    },
+    {
+      "query": "मेरी आय 5 लाख है, क्या मैं PMAY के लिए योग्य हूं?",
+      "expected_eligible": false,
+      "scheme": "PMAY"
+    },
+    {
+      "query": "I want to start a small business, what schemes are available?",
+      "expected_eligible": true,
+      "scheme": "PMMY"
+    }
+  ]
+}
