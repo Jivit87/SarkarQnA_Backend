@@ -6,32 +6,65 @@ AI-powered government scheme eligibility checker for Indian citizens. Built with
 
 - **Multilingual Support**: Hindi, English, and Hinglish queries
 - **RAG Pipeline**: Retrieval-Augmented Generation for accurate answers
-- **Free Models**: Uses HuggingFace models (no OpenAI costs)
+- **100% HuggingFace**: Uses only HuggingFace models (completely free)
+- **Local Models**: Works offline with local model downloads
 - **Transliteration**: Automatic Hinglish to Hindi conversion
 - **Confidence Scoring**: Reliability metrics for answers
 - **Source Attribution**: Shows sources for transparency
+- **No API Costs**: Completely free to run
 
 ## Quick Start
 
-### 1. Install Dependencies
+### Option A: Automated Setup (Recommended)
+
+```bash
+# Run the quick start script (does everything automatically)
+python scripts/quick_start.py
+```
+
+### Option B: Manual Setup
+
+#### 1. Install Dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### 2. Environment Setup
+#### 2. Environment Setup
 
-Create a `.env` file:
+**Option A: Interactive Setup (Recommended)**
+```bash
+# Run the interactive setup script
+python scripts/setup_env.py
+```
 
+**Option B: Manual Setup**
+```bash
+# Copy the template
+cp env_template.txt .env
+
+# Edit the .env file with your actual API keys
+nano .env  # or use your preferred editor
+```
+
+**API Keys (All Optional):**
+- **HuggingFace Token** (Optional - For better performance): Get from [huggingface.co/settings/tokens](https://huggingface.co/settings/tokens)
+- **LangGraph API Key** (Optional - Web search): Get from [langgraph.com](https://langgraph.com/)
+
+**Minimal .env setup for hackathon (works without any API keys):**
 ```env
-# Optional: HuggingFace API token for better performance
-HUGGINGFACE_API_TOKEN=your_hf_token_here
+# Works completely offline with local models
+USE_LOCAL_MODEL=true
+DEVICE=cpu
+LLM_MODEL=microsoft/DialoGPT-medium
+EMBEDDING_MODEL=sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2
+```
 
-# Optional: LangGraph API key for web search
+**With HuggingFace API token (better performance):**
+```env
+HUGGINGFACE_API_TOKEN=hf_your_token_here
+USE_LOCAL_MODEL=false
 LANGGRAPH_API_KEY=your_langgraph_key_here
-
-# Optional: OpenAI fallback (if HF token not available)
-OPENAI_API_KEY=your_openai_key_here
 ```
 
 ### 3. Prepare Data
@@ -102,8 +135,12 @@ sarkarqna_backend/
 │   └── mock_data.json       # Sample data
 ├── scripts/                 # Utility scripts
 │   ├── create_embeddings.py
+│   ├── setup_env.py
+│   ├── quick_start.py
 │   └── test_api.py
-└── requirements.txt
+├── env_template.txt         # Environment template
+├── requirements.txt
+└── README.md
 ```
 
 ## Development

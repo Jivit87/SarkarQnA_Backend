@@ -1,0 +1,90 @@
+# SarkarQnA Backend Environment Configuration
+# Copy this file to .env and update with your actual API keys
+
+# =============================================================================
+# HUGGINGFACE API KEYS
+# =============================================================================
+
+# HuggingFace API Token (Optional - For better performance)
+# Get your token from: https://huggingface.co/settings/tokens
+HUGGINGFACE_API_TOKEN=your_huggingface_token_here
+
+# LangGraph API Key (Optional - For web search functionality)
+# Get your key from: https://langgraph.com/
+LANGGRAPH_API_KEY=your_langgraph_key_here
+
+# =============================================================================
+# HUGGINGFACE MODEL CONFIGURATION
+# =============================================================================
+
+# Embedding Model (Multilingual for Hindi/English/Hinglish)
+EMBEDDING_MODEL=sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2
+
+# LLM Model (Conversational AI for Indian languages)
+LLM_MODEL=microsoft/DialoGPT-medium
+
+# Device Configuration
+DEVICE=cpu  # cpu, cuda, auto
+USE_LOCAL_MODEL=true  # true for local models, false for API
+
+# =============================================================================
+# APPLICATION SETTINGS
+# =============================================================================
+
+# Data Paths
+EMBEDDING_PATH=data/embeddings
+SCHEMES_PDF_PATH=data/schemes_pdf
+
+# API Settings
+MAX_RETRIEVAL_DOCS=3
+CONFIDENCE_THRESHOLD=0.5
+
+# Server Settings
+HOST=0.0.0.0
+PORT=8000
+DEBUG=true
+
+# =============================================================================
+# HUGGINGFACE MODEL SETTINGS
+# =============================================================================
+
+# Model Parameters
+MAX_LENGTH=512
+TEMPERATURE=0.1
+DO_SAMPLE=true
+
+# =============================================================================
+# CORS SETTINGS
+# =============================================================================
+
+# Allowed Origins (comma-separated)
+ALLOWED_ORIGINS=http://localhost:3000,http://localhost:3001,http://localhost,*
+
+# =============================================================================
+# LOGGING
+# =============================================================================
+
+# Log Level (DEBUG, INFO, WARNING, ERROR)
+LOG_LEVEL=INFO
+
+# =============================================================================
+# DEVELOPMENT SETTINGS
+# =============================================================================
+
+# Enable/Disable features
+ENABLE_LANGGRAPH=true
+ENABLE_LOGGING=true
+
+# =============================================================================
+# EXAMPLE CONFIGURATION FOR HACKATHON
+# =============================================================================
+
+# Minimal setup for hackathon (works without API keys):
+# USE_LOCAL_MODEL=true
+# DEVICE=cpu
+# LLM_MODEL=microsoft/DialoGPT-medium
+# EMBEDDING_MODEL=sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2
+
+# With HuggingFace API token (better performance):
+# HUGGINGFACE_API_TOKEN=hf_your_token_here
+# USE_LOCAL_MODEL=false
