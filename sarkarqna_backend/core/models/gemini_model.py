@@ -10,12 +10,13 @@ class GeminiModel:
         self.demo_mode = False
         
         try:
-            if settings.GEMINI_API_KEY and settings.GEMINI_API_KEY != "your_gemini_api_key_here":
+            if settings.GEMINI_API_KEY and settings.GEMINI_API_KEY != "your_gemini_api_key_here" and len(settings.GEMINI_API_KEY) > 20:
                 genai.configure(api_key=settings.GEMINI_API_KEY)
-                self.model = genai.GenerativeModel('gemini-pro')
-                logger.info("Gemini model initialized successfully with API key")
+                # Use the latest available Gemini model
+                self.model = genai.GenerativeModel('gemini-pro-latest')
+                logger.info(f"Gemini model initialized successfully with API key: {settings.GEMINI_API_KEY[:20]}...")
             else:
-                logger.warning("Gemini API key not configured. Running in demo mode.")
+                logger.warning("Gemini API key not configured properly. Running in demo mode.")
                 self.demo_mode = True
                 logger.info("Gemini model initialized in demo mode")
         except Exception as e:

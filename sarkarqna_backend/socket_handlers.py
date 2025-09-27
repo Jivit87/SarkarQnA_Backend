@@ -22,9 +22,6 @@ rag_service = None
 langgraph_service = None
 gemini_model = None
 
-# Message deduplication
-processed_messages = set()
-
 def initialize_services():
     """Initialize Gemini, RAG and LangGraph services"""
     global rag_service, langgraph_service, gemini_model
@@ -53,9 +50,12 @@ async def disconnect(sid):
     logger.info(f"Client {sid} disconnected")
 
 @sio.event
-async def chat_message(sid, data):
-    """Handle chat messages - primary message handler"""
+async def message(sid, data):
+    """Handle incoming messages - main message handler"""
     await handle_chat_message(sid, data)
+
+# Removed duplicate handlers to prevent multiple responses
+# Only 'message' event handler is active
 
 async def handle_chat_message(sid, data):
     """Process chat message and send response"""
@@ -70,19 +70,8 @@ async def handle_chat_message(sid, data):
             await sio.emit('error', {'message': 'Empty message received'}, room=sid)
             return
         
-        # Prevent duplicate processing
-        if message_id and message_id in processed_messages:
-            logger.info(f"Message {message_id} already processed, skipping")
-            return
-        
-        # Add to processed messages
+        # Send acknowledgment
         if message_id:
-            processed_messages.add(message_id)
-            # Keep only last 100 messages to prevent memory leak
-            if len(processed_messages) > 100:
-                processed_messages.clear()
-            
-            # Send acknowledgment
             await sio.emit('message_ack', {'messageId': message_id}, room=sid)
         
         if not gemini_model:
@@ -126,9 +115,9 @@ async def handle_chat_message(sid, data):
                 
             except Exception as e:
                 logger.error(f"Error processing message with RAG: {e}")
-                response_data['text'] += f"\n\n*Note: Error accessing additional scheme data: {str(e)}*"
+                # Continue with Gemini response even if RAG fails
         
-        # Send the response (either with or without RAG data)
+        # Send single response (either enhanced with RAG or just Gemini)
         await sio.emit('response', response_data, room=sid)
         
         logger.info(f"Sent response to {sid}: {response_data['text'][:100]}...")
