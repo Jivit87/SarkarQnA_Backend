@@ -6,7 +6,8 @@ from dotenv import load_dotenv
 load_dotenv()
 
 class Settings:
-    # HuggingFace API Keys
+    # API Keys
+    GEMINI_API_KEY: str = os.getenv("GEMINI_API_KEY", "")
     HUGGINGFACE_API_TOKEN: str = os.getenv("HUGGINGFACE_API_TOKEN", "")
     LANGGRAPH_API_KEY: str = os.getenv("LANGGRAPH_API_KEY", "")
     
@@ -34,7 +35,9 @@ class Settings:
     # CORS Settings
     ALLOWED_ORIGINS: list = [
         "http://localhost:3000",
-        "http://localhost:3001", 
+        "http://localhost:3001",
+        "http://localhost:5173",  # Vite's default port
+        "http://127.0.0.1:5173",
         "http://localhost",
         "*"
     ]

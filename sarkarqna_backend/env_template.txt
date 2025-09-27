@@ -2,8 +2,12 @@
 # Copy this file to .env and update with your actual API keys
 
 # =============================================================================
-# HUGGINGFACE API KEYS
+# API KEYS
 # =============================================================================
+
+# Gemini API Key (Required)
+# Get your key from: https://makersuite.google.com/app/apikey
+GEMINI_API_KEY=your_gemini_api_key_here
 
 # HuggingFace API Token (Optional - For better performance)
 # Get your token from: https://huggingface.co/settings/tokens
